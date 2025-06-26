@@ -16,18 +16,21 @@ model User {
   role    String  @default("user")
 
   enrollments CourseEnrollment[]
+  readFiles   ReadFile[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Course {
-  id          String  @id @default(cuid())
-  title       String
-  code        String  @unique
-  type        String  @default("Course")
+  id    String @id @default(cuid())
+  title String
+  code  String @unique
+  type  String @default("Course")
 
   enrollments CourseEnrollment[]
+  folders     Folder[]
+  files       File[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -44,4 +47,54 @@ model CourseEnrollment {
   enrolledAt DateTime @default(now())
 
   @@unique([userId, courseId])
+}
+
+model Folder {
+  id             String  @id @default(cuid())
+  title          String
+  parentFolderId String?
+  courseId       String
+  type           String  @default("Folder")
+
+  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  parentFolder Folder?  @relation("SubFolders", fields: [parentFolderId], references: [id])
+  children     Folder[] @relation("SubFolders")
+  files        File[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model File {
+  id       String   @id @default(cuid())
+  title    String
+  filePath String
+  type     FileType @default(File)
+
+  folderId String?
+  courseId String
+
+  folder  Folder?    @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  course  Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  readers ReadFile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum FileType {
+  File
+  Zip
+}
+
+model ReadFile {
+  userId String
+  fileId String
+
+  user User @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  file File @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([userId, fileId])
 }
