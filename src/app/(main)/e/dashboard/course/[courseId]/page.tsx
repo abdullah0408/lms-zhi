@@ -1,8 +1,9 @@
-export const revalidate = 3600;
-
 import { prisma } from "@/lib/prisma";
 import React from "react";
 import ItemGrid from "@/components/e/ItemGrid";
+
+export const dynamic = 'force-static';
+export const revalidate = 3600;  // re-generate every hour
 
 export default async function CourseDashboardPage({
   params,
