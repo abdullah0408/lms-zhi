@@ -80,6 +80,8 @@ export default function Page() {
       } else {
         setErrors({ form: "Something went wrong. Please try again." });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -102,6 +104,8 @@ export default function Page() {
       console.error(err);
       setErrors({ code: "Invalid verification code or other error." });
       setLoading(false);
+    } finally {
+        setLoading(false);
     }
   };
 
