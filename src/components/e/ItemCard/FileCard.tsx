@@ -127,7 +127,14 @@ const FileCard = ({ file }: { file: File }) => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem onClick={handleDoubleClick}>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(
+                          `/e/dashboard/course/${file.courseId}/file/${file.id}`
+                        );
+                      }}
+                    >
                       <ArrowUpRight className="w-4 h-4 mr-2" />
                       Open
                     </DropdownMenuItem>
@@ -154,7 +161,14 @@ const FileCard = ({ file }: { file: File }) => {
         </ContextMenuTrigger>
 
         <ContextMenuContent className="w-48">
-          <ContextMenuItem onClick={handleDoubleClick}>
+          <ContextMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(
+                `/e/dashboard/course/${file.courseId}/file/${file.id}`
+              );
+            }}
+          >
             <ArrowUpRight className="w-4 h-4 mr-2" />
             Open
           </ContextMenuItem>

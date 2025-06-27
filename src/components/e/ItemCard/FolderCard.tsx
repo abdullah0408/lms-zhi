@@ -90,7 +90,12 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuItem
-                      onClick={handleDoubleClick}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(
+                          `/e/dashboard/course/${folder.courseId}/folder/${folder.id}`
+                        );
+                      }}
                     >
                       <ArrowUpRight className="w-4 h-4 mr-2" />
                       Open
@@ -102,7 +107,14 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
           </Card>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-48">
-          <ContextMenuItem onClick={handleDoubleClick}>
+          <ContextMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(
+                `/e/dashboard/course/${folder.courseId}/folder/${folder.id}`
+              );
+            }}
+          >
             <ArrowUpRight className="w-4 h-4 mr-2" />
             Open
           </ContextMenuItem>
