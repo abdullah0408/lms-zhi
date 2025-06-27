@@ -8,5 +8,5 @@ export default async function Page({
   params: Promise<{ courseId: string }>;
 }) {
   const { courseId } = await params;
-  redirect(`/dashboard/course/${courseId}`);
+  redirect(`/e/dashboard/course/${courseId}`);
 }

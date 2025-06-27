@@ -1,3 +1,7 @@
-export default function Home() {
-  return <div>Hello World</div>;
+export const dynamic = "force-static";
+
+import { redirect } from "next/navigation";
+
+export default function Page() {
+  redirect("/dashboard");
 }
