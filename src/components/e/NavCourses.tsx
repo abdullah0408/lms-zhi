@@ -40,7 +40,7 @@ export function NavCourses() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   const handleCopyLink = async (id: string) => {
-    const url = `${baseUrl}/dashboard/course/${id}`;
+    const url = `${baseUrl}/e/dashboard/course/${id}`;
     try {
       await navigator.clipboard.writeText(url);
     } catch (err) {
@@ -49,7 +49,7 @@ export function NavCourses() {
   };
 
   const handleOpenInNewTab = (id: string) => {
-    const url = `${baseUrl}/dashboard/course/${id}`;
+    const url = `${baseUrl}/e/dashboard/course/${id}`;
     window.open(url, "_blank");
   };
 
@@ -83,7 +83,7 @@ export function NavCourses() {
           enrolledCourses.map((item) => (
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton asChild>
-                <Link href={`/dashboard/course/${item.id}`} title={item.title}>
+                <Link href={`/e/dashboard/course/${item.id}`} title={item.title}>
                   <span>📘</span>
                   <span>{item.title}</span>
                 </Link>
@@ -114,7 +114,7 @@ export function NavCourses() {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link
-                      href={`/dashboard/course/${item.id}`}
+                      href={`/e/dashboard/course/${item.id}`}
                       className="flex items-center gap-2"
                     >
                       <ArrowUpRight className="text-muted-foreground" />
