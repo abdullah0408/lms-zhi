@@ -11,19 +11,44 @@ export default clerkMiddleware(async (auth, req) => {
   const url = new URL(req.url);
   const { userId } = await auth();
 
-  if (isPublicRoute(req)) {
-    // If user is signed in and tries to access sign-in or sign-up, redirect them to /e/dashboard
-    if (
-      userId &&
-      (url.pathname.startsWith("/sign-in") ||
-        url.pathname.startsWith("/sign-up"))
-    ) {
-      return Response.redirect(new URL("/e/dashboard", req.url));
+  if (!userId) {
+    if (!isPublicRoute(req)) {
+      await auth.protect(); // Protect non-public routes
     }
     return;
   }
 
-  await auth.protect();
+  // Get user data from Clerk
+  const userResponse = await fetch(`https://api.clerk.dev/v1/users/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const user = await userResponse.json();
+  const role = user?.public_metadata?.role;
+
+  // Redirect logic
+
+  if (role !== "admin" && url.pathname.startsWith("/dashboard")) {
+    return Response.redirect(new URL("/e/dashboard", req.url));
+  }
+
+  if (
+    isPublicRoute(req) &&
+    (url.pathname.startsWith("/sign-in") || url.pathname.startsWith("/sign-up"))
+  ) {
+    if (role === "admin") {
+      return Response.redirect(new URL("/dashboard", req.url));
+    } else {
+      return Response.redirect(new URL("/e/dashboard", req.url));
+    }
+  }
+
+  if (!isPublicRoute(req)) {
+    await auth.protect();
+  }
 });
 
 export const config = {
