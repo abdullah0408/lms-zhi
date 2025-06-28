@@ -50,7 +50,7 @@ const CourseCard = ({ course }: { course: Course }) => {
   const { userDetails } = useAuth();
   const { refreshEnrolledCourses } = useEnrolledCourses();
 
-  const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
 
     if (
@@ -115,7 +115,7 @@ const CourseCard = ({ course }: { course: Course }) => {
           <Card
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onDoubleClick={handleDoubleClick}
+            onClick={handleClick}
             className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
           >
             <CardContent className="flex items-center p-4 space-x-3">
