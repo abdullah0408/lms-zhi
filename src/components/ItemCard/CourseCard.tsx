@@ -9,7 +9,15 @@ import {
   ContextMenuItem,
 } from "../ui/context-menu";
 import { Card, CardContent } from "../ui/card";
-import { MoreVertical, Trash2, BookCopy, Book } from "lucide-react";
+import {
+  MoreVertical,
+  Trash2,
+  BookCopy,
+  Book,
+  BookAlert,
+  Loader2,
+  ArrowUpRight,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,45 +27,75 @@ import {
 import { Button } from "../ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { Course } from "@/generated/prisma";
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { useEnrolledCourses } from "@/hooks/useEnrolledCourses";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "../ui/dialog";
-import { useEnrolledCourses } from "@/hooks/useEnrolledCourses";
+import { toast } from "sonner";
 
-const CourseCard = ({
-  course,
-  onDeleteCourseSuccess,
-}: {
-  course: Course;
-  onDeleteCourseSuccess?: (deletedId: string) => void;
-}) => {
+const CourseCard = ({ course }: { course: Course }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [unenrollOpen, setUnenrollOpen] = useState(false);
+  const [targetCourseId, setTargetCourseId] = useState<string | null>(null);
+  const [unenrolling, setUnenrolling] = useState(false);
+
   const router = useRouter();
   const { userDetails } = useAuth();
   const { refreshEnrolledCourses } = useEnrolledCourses();
 
-  const handleOpen = () => {
+  const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+
+    if (
+      target.closest("button") ||
+      target.closest("svg") ||
+      target.closest('[role="menu"]') ||
+      target.closest("[data-interactive]")
+    ) {
+      return;
+    }
+
     router.push(`/dashboard/course/${course.id}`);
+  };
+
+  const confirmUnenroll = async () => {
+    if (!targetCourseId) return;
+
+    setUnenrolling(true);
+    try {
+      await fetch("/api/user/enrolled-courses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ toAdd: [], toRemove: [targetCourseId] }),
+      });
+      refreshEnrolledCourses();
+      toast.success("Unenrolled from course");
+    } catch (err) {
+      console.error("Failed to unenroll from course:", err);
+      toast.error("Failed to unenroll");
+    } finally {
+      setUnenrolling(false);
+      setUnenrollOpen(false);
+      setTargetCourseId(null);
+    }
   };
 
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      const res = await fetch(`/api/course/delete?courseId=${course.id}`, {
+      const res = await fetch(`/api/courses/delete?courseId=${course.id}`, {
         method: "DELETE",
       });
       if (res.ok) {
         toast.success("Course deleted successfully");
         refreshEnrolledCourses();
-        onDeleteCourseSuccess?.(course.id);
       } else {
         throw new Error();
       }
@@ -77,7 +115,7 @@ const CourseCard = ({
           <Card
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onDoubleClick={handleOpen}
+            onDoubleClick={handleDoubleClick}
             className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
           >
             <CardContent className="flex items-center p-4 space-x-3">
@@ -112,25 +150,29 @@ const CourseCard = ({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleOpen();
+                        router.push(`/dashboard/course/${course.id}`);
                       }}
                     >
-                      <BookCopy className="w-4 h-4 mr-2" />
+                      <ArrowUpRight className="w-4 h-4 mr-2" />
                       Open
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setTargetCourseId(course.id);
+                        setUnenrollOpen(true);
+                      }}
+                      className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]"
+                    >
+                      <BookAlert className="w-4 h-4 mr-2 text-red-500" />
+                      <span>Unenroll</span>
                     </DropdownMenuItem>
                     {userDetails?.role === "admin" && (
                       <DropdownMenuItem
+                        onClick={() => setDeleteOpen(true)}
                         className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]"
-                        asChild
                       >
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start text-red-500"
-                          onClick={() => setDeleteOpen(true)}
-                        >
-                          <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
-                          Delete
-                        </Button>
+                        <Trash2 className="w-4 h-4 mr-2 text-red-500" />
+                        <span>Delete</span>
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>
@@ -139,36 +181,48 @@ const CourseCard = ({
             </CardContent>
           </Card>
         </ContextMenuTrigger>
+
         <ContextMenuContent className="w-48">
-          <ContextMenuItem onClick={handleOpen}>
-            <BookCopy className="w-4 h-4 mr-2" />
+          <ContextMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/dashboard/course/${course.id}`);
+            }}
+          >
+            <ArrowUpRight className="w-4 h-4 mr-2" />
             Open
+          </ContextMenuItem>
+          <ContextMenuItem
+            onClick={() => {
+              setTargetCourseId(course.id);
+              setUnenrollOpen(true);
+            }}
+            className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]"
+          >
+            <BookAlert className="w-4 h-4 mr-2 text-red-500" />
+            <span>Unenroll</span>
           </ContextMenuItem>
           {userDetails?.role === "admin" && (
             <ContextMenuItem
+              onClick={() => setDeleteOpen(true)}
               className="!text-red-500 hover:!text-red-600 hover:!bg-[rgba(239,68,68,0.1)]"
-              asChild
             >
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-red-500"
-                onClick={() => setDeleteOpen(true)}
-              >
-                <Trash2 className="w-4 h-4 mr-2 text-red-500 hover:!text-red-600" />
-                Delete
-              </Button>
+              <Trash2 className="w-4 h-4 mr-2 text-red-500" />
+              <span>Delete</span>
             </ContextMenuItem>
           )}
         </ContextMenuContent>
       </ContextMenu>
+
+      {/* Delete Dialog */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
           </DialogHeader>
           <p>
-            Are you sure you want to delete the course "{course.title}"? This
-            action cannot be undone.
+            Are you sure you want to delete "{course.title}"? This action cannot
+            be undone.
           </p>
           <DialogFooter>
             <Button
@@ -181,9 +235,36 @@ const CourseCard = ({
             <Button
               onClick={handleDelete}
               disabled={deleting}
-              className="bg-red-500 hover:bg-red-600 text-white"
+              className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2"
             >
+              {deleting && <Loader2 className="w-4 h-4 animate-spin" />}
               {deleting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Unenroll Dialog */}
+      <Dialog open={unenrollOpen} onOpenChange={setUnenrollOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Unenrollment</DialogTitle>
+          </DialogHeader>
+          <p>
+            Are you sure you want to unenroll from "{course.title}"? You will
+            lose access to this course.
+          </p>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setUnenrollOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmUnenroll}
+              disabled={unenrolling}
+              className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2"
+            >
+              {unenrolling && <Loader2 className="w-4 h-4 animate-spin" />}
+              {unenrolling ? "Unenrolling..." : "Unenroll"}
             </Button>
           </DialogFooter>
         </DialogContent>
