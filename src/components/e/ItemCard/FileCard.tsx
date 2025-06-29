@@ -29,6 +29,7 @@ import { formatDistanceToNow } from "date-fns";
 import { File } from "@/generated/prisma";
 import { toast } from "sonner";
 
+import { getItemUrl, shouldIgnoreClick } from "@/lib/utils";
 import { usePreviewFile } from "@/hooks/usePreviewFile";
 
 const FileCard = ({ file }: { file: File }) => {
@@ -60,18 +61,8 @@ const FileCard = ({ file }: { file: File }) => {
   };
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-
-    if (
-      target.closest("button") ||
-      target.closest("svg") ||
-      target.closest('[role="menu"]') ||
-      target.closest("[data-interactive]")
-    ) {
-      return;
-    }
-
-    router.push(`/e/dashboard/course/${file.courseId}/file/${file.id}`);
+    if (shouldIgnoreClick(e)) return;
+    router.push(getItemUrl(file, "File", true));
   };
 
   return (
@@ -130,9 +121,7 @@ const FileCard = ({ file }: { file: File }) => {
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(
-                          `/e/dashboard/course/${file.courseId}/file/${file.id}`
-                        );
+                        router.push(getItemUrl(file, "File", true));
                       }}
                     >
                       <ArrowUpRight className="w-4 h-4 mr-2" />
@@ -164,9 +153,7 @@ const FileCard = ({ file }: { file: File }) => {
           <ContextMenuItem
             onClick={(e) => {
               e.stopPropagation();
-              router.push(
-                `/e/dashboard/course/${file.courseId}/file/${file.id}`
-              );
+              router.push(getItemUrl(file, "File", true));
             }}
           >
             <ArrowUpRight className="w-4 h-4 mr-2" />

@@ -127,6 +127,7 @@ The application exposes several API endpoints to handle backend logic:
 
 - `/api/clerk/webhooks/user-created`: Handles user creation events from Clerk.
 - `/api/courses`: GET all courses.
+- `/api/courses/delete`: DELETE a course.
 - `/api/file/delete`: DELETE a file.
 - `/api/file/download`: GET a pre-signed URL for file download.
 - `/api/file/mark-read`: POST to mark a file as read.

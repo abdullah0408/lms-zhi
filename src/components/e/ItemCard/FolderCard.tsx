@@ -23,6 +23,7 @@ import {
 } from "../../ui/dropdown-menu";
 import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";
+import { getItemUrl, shouldIgnoreClick } from "@/lib/utils";
 import { Folder } from "@/generated/prisma";
 
 const FolderCard = ({ folder }: { folder: Folder }) => {
@@ -30,18 +31,8 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
   const router = useRouter();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-
-    if (
-      target.closest("button") ||
-      target.closest("svg") ||
-      target.closest('[role="menu"]') ||
-      target.closest("[data-interactive]")
-    ) {
-      return;
-    }
-
-    router.push(`/e/dashboard/course/${folder.courseId}/folder/${folder.id}`);
+    if (shouldIgnoreClick(e)) return;
+    router.push(getItemUrl(folder, "Folder", true));
   };
 
   return (
@@ -92,9 +83,7 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(
-                          `/e/dashboard/course/${folder.courseId}/folder/${folder.id}`
-                        );
+                        router.push(getItemUrl(folder, "Folder", true));
                       }}
                     >
                       <ArrowUpRight className="w-4 h-4 mr-2" />
@@ -110,9 +99,7 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
           <ContextMenuItem
             onClick={(e) => {
               e.stopPropagation();
-              router.push(
-                `/e/dashboard/course/${folder.courseId}/folder/${folder.id}`
-              );
+              router.push(getItemUrl(folder, "Folder", true));
             }}
           >
             <ArrowUpRight className="w-4 h-4 mr-2" />

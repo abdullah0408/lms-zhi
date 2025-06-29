@@ -27,6 +27,7 @@ import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { Course } from "@/generated/prisma";
 import { useEnrolledCourses } from "@/hooks/useEnrolledCourses";
+import { getItemUrl, shouldIgnoreClick } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -46,18 +47,8 @@ const CourseCard = ({ course }: { course: Course }) => {
   const { refreshEnrolledCourses } = useEnrolledCourses();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-
-    if (
-      target.closest("button") ||
-      target.closest("svg") ||
-      target.closest('[role="menu"]') ||
-      target.closest("[data-interactive]")
-    ) {
-      return;
-    }
-
-    router.push(`/e/dashboard/course/${course.id}`);
+    if (shouldIgnoreClick(e)) return;
+    router.push(getItemUrl(course, "Course", true));
   };
 
   const confirmUnenroll = async () => {
@@ -124,7 +115,7 @@ const CourseCard = ({ course }: { course: Course }) => {
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`/e/dashboard/course/${course.id}`);
+                        router.push(getItemUrl(course, "Course", true));
                       }}
                     >
                       <ArrowUpRight className="w-4 h-4 mr-2" />
@@ -151,7 +142,7 @@ const CourseCard = ({ course }: { course: Course }) => {
           <ContextMenuItem
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/e/dashboard/course/${course.id}`);
+              router.push(getItemUrl(course, "Course", true));
             }}
           >
             <ArrowUpRight className="w-4 h-4 mr-2" />

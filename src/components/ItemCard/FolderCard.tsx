@@ -33,6 +33,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+import { getItemUrl, shouldIgnoreClick } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -44,18 +45,8 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
   const { userDetails } = useAuth();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-
-    if (
-      target.closest("button") ||
-      target.closest("svg") ||
-      target.closest('[role="menu"]') ||
-      target.closest("[data-interactive]")
-    ) {
-      return;
-    }
-
-    router.push(`/dashboard/course/${folder.courseId}/folder/${folder.id}`);
+    if (shouldIgnoreClick(e)) return;
+    router.push(getItemUrl(folder, "Folder"));
   };
 
   const handleDelete = async () => {
@@ -124,9 +115,7 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(
-                          `/dashboard/course/${folder.courseId}/folder/${folder.id}`
-                        );
+                        router.push(getItemUrl(folder, "Folder"));
                       }}
                     >
                       <ArrowUpRight className="w-4 h-4 mr-2" />
@@ -157,9 +146,7 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
           <ContextMenuItem
             onClick={(e) => {
               e.stopPropagation();
-              router.push(
-                `/dashboard/course/${folder.courseId}/folder/${folder.id}`
-              );
+              router.push(getItemUrl(folder, "Folder"));
             }}
           >
             <ArrowUpRight className="w-4 h-4 mr-2" />
