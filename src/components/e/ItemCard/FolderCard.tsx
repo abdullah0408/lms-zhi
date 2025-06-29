@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import {
   ContextMenu,
@@ -10,9 +10,7 @@ import {
 } from "../../ui/context-menu";
 import { Card, CardContent } from "../../ui/card";
 import {
-  FolderOpen,
   MoreVertical,
-  Folder as FolderIcon,
   ArrowUpRight,
 } from "lucide-react";
 import {
@@ -25,9 +23,9 @@ import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { getItemUrl, shouldIgnoreClick } from "@/lib/utils";
 import { Folder } from "@/generated/prisma";
+import Image from "next/image";
 
 const FolderCard = ({ folder }: { folder: Folder }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -40,18 +38,12 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
       <ContextMenu>
         <ContextMenuTrigger>
           <Card
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             onClick={handleClick}
             className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
           >
             <CardContent className="flex items-center p-4 space-x-3">
               <div className="flex-shrink-0">
-                {isHovered ? (
-                  <FolderOpen className="text-primary" />
-                ) : (
-                  <FolderIcon />
-                )}
+                <Image src="/folder.png" alt="folder icon" width={32} height={32} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-1">

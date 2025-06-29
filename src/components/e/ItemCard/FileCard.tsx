@@ -11,9 +11,7 @@ import {
 import { Card, CardContent } from "../../ui/card";
 import {
   MoreVertical,
-  File as FileIcon,
   Eye,
-  FileText,
   Download,
   Loader2,
   ArrowUpRight,
@@ -28,16 +26,15 @@ import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { File } from "@/generated/prisma";
 import { toast } from "sonner";
-
 import { getItemUrl, shouldIgnoreClick } from "@/lib/utils";
 import { usePreviewFile } from "@/hooks/usePreviewFile";
+import Image from "next/image";
 
 const FileCard = ({ file }: { file: File }) => {
   const router = useRouter();
   const { openPreview } = usePreviewFile();
 
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleDownload = async () => {
     try {
@@ -70,18 +67,12 @@ const FileCard = ({ file }: { file: File }) => {
       <ContextMenu>
         <ContextMenuTrigger>
           <Card
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             onClick={handleClick}
             className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
           >
             <CardContent className="flex items-center p-4 space-x-3">
               <div className="flex-shrink-0">
-                {isHovered ? (
-                  <FileText className="text-primary" />
-                ) : (
-                  <FileIcon />
-                )}
+                <Image src="/pdf.png" alt="pdf icon" width={32} height={32} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-1">

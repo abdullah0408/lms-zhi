@@ -10,7 +10,6 @@ import {
 } from "../ui/context-menu";
 import { Card, CardContent } from "../ui/card";
 import {
-  FileArchive,
   MoreVertical,
   Download,
   Trash2,
@@ -39,6 +38,7 @@ import {
 import { toast } from "sonner";
 import { useReadStatus } from "@/hooks/useReadStatus";
 import { handleDelete } from "@/lib/utils";
+import Image from "next/image";
 
 const ZipCard = ({ file }: { file: File }) => {
   const router = useRouter();
@@ -47,7 +47,6 @@ const ZipCard = ({ file }: { file: File }) => {
 
   const isRead = readMap[file.id] ?? false;
 
-  const [isHovered, setIsHovered] = useState(false);
   const [readLoading, setReadLoading] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -104,17 +103,11 @@ const ZipCard = ({ file }: { file: File }) => {
       <ContextMenu>
         <ContextMenuTrigger>
           <Card
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
           >
             <CardContent className="flex items-center p-4 space-x-3">
               <div className="flex-shrink-0">
-                {isHovered ? (
-                  <FileArchive className="text-primary" />
-                ) : (
-                  <FileArchive />
-                )}
+                <Image src="/zip.png" alt="zip icon" width={32} height={32} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-1">

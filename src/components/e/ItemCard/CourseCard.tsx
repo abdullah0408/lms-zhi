@@ -11,8 +11,6 @@ import {
 import { Card, CardContent } from "../../ui/card";
 import {
   MoreVertical,
-  BookCopy,
-  Book,
   BookAlert,
   Loader2,
   ArrowUpRight,
@@ -36,9 +34,9 @@ import {
   DialogFooter,
 } from "../../ui/dialog";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const CourseCard = ({ course }: { course: Course }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [unenrollOpen, setUnenrollOpen] = useState(false);
   const [targetCourseId, setTargetCourseId] = useState<string | null>(null);
   const [unenrolling, setUnenrolling] = useState(false);
@@ -78,14 +76,12 @@ const CourseCard = ({ course }: { course: Course }) => {
       <ContextMenu>
         <ContextMenuTrigger>
           <Card
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             onClick={handleClick}
             className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
           >
             <CardContent className="flex items-center p-4 space-x-3">
               <div className="flex-shrink-0">
-                {isHovered ? <Book className="text-primary" /> : <BookCopy />}
+                <Image src="/course.png" alt="course icon" width={32} height={32} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-1">

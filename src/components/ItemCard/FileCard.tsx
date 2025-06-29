@@ -11,9 +11,7 @@ import {
 import { Card, CardContent } from "../ui/card";
 import {
   MoreVertical,
-  File as FileIcon,
   Eye,
-  FileText,
   Trash2,
   Download,
   Loader2,
@@ -43,6 +41,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePreviewFile } from "@/hooks/usePreviewFile";
 import { getItemUrl, shouldIgnoreClick, handleDelete } from "@/lib/utils";
 import { useReadStatus } from "@/hooks/useReadStatus";
+import Image from "next/image";
 
 const FileCard = ({ file }: { file: File }) => {
   const router = useRouter();
@@ -55,7 +54,6 @@ const FileCard = ({ file }: { file: File }) => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [readLoading, setReadLoading] = useState(false);
 
   const toggleRead = async (val: boolean): Promise<void> => {
@@ -114,18 +112,12 @@ const FileCard = ({ file }: { file: File }) => {
       <ContextMenu>
         <ContextMenuTrigger>
           <Card
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             onClick={handleClick}
             className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
           >
             <CardContent className="flex items-center p-4 space-x-3">
               <div className="flex-shrink-0">
-                {isHovered ? (
-                  <FileText className="text-primary" />
-                ) : (
-                  <FileIcon />
-                )}
+                <Image src="/pdf.png" alt="pdf icon" width={32} height={32} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-1">

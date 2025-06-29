@@ -9,7 +9,6 @@ import {
 } from "../../ui/context-menu";
 import { Card, CardContent } from "../../ui/card";
 import {
-  FileArchive,
   MoreVertical,
   Download,
   Loader2,
@@ -24,10 +23,10 @@ import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { File } from "@/generated/prisma";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const ZipCard = ({ file }: { file: File }) => {
 
-  const [isHovered, setIsHovered] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async () => {
@@ -56,17 +55,11 @@ const ZipCard = ({ file }: { file: File }) => {
       <ContextMenu>
         <ContextMenuTrigger>
           <Card
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             className="hover:shadow-md transition-all duration-200 hover:bg-accent/50 cursor-pointer border border-border/50 relative py-0"
           >
             <CardContent className="flex items-center p-4 space-x-3">
               <div className="flex-shrink-0">
-                {isHovered ? (
-                  <FileArchive className="text-primary" />
-                ) : (
-                  <FileArchive />
-                )}
+                <Image src="/zip.png" alt="zip icon" width={32} height={32} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-1">
