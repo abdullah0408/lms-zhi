@@ -7,7 +7,11 @@ import ZipCard from "./ZipCard";
 import { Folder, Course, File } from "@/generated/prisma";
 import CourseCard from "./CourseCard";
 
-const ItemCard = ({ item }: { item: File | Folder | Course }) => {
+interface EnrolledCourse extends Course {
+  enrolledAt: Date;
+}
+
+const ItemCard = ({ item }: { item: File | Folder | Course | EnrolledCourse }) => {
   switch (item.type) {
     case "Folder":
       return <FolderCard folder={item as Folder} />;
@@ -16,7 +20,7 @@ const ItemCard = ({ item }: { item: File | Folder | Course }) => {
     case "Zip":
       return <ZipCard file={item as File} />;
     case "Course":
-      return <CourseCard course={item as Course} />;
+      return <CourseCard course={item as EnrolledCourse} />;
     default:
       return null;
   }

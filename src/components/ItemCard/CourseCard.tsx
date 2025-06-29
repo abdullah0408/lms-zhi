@@ -38,7 +38,11 @@ import {
 import { toast } from "sonner";
 import Image from "next/image";
 
-const CourseCard = ({ course }: { course: Course }) => {
+interface EnrolledCourse extends Course {
+  enrolledAt: Date;
+}
+
+const CourseCard = ({ course }: { course: EnrolledCourse }) => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [unenrollOpen, setUnenrollOpen] = useState(false);
@@ -107,7 +111,7 @@ const CourseCard = ({ course }: { course: Course }) => {
                   </p>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(course.createdAt), {
+                  {formatDistanceToNow(new Date(course.enrolledAt), {
                     addSuffix: true,
                   })}
                 </div>

@@ -38,8 +38,11 @@ export async function GET(req: Request) {
       },
     });
 
-    // Return the enrolled courses.
-    const enrolledCourses = enrollments.map((e) => e.course);
+    // Return the enrolled courses with their enrollment date.
+    const enrolledCourses = enrollments.map((e) => ({
+      ...e.course,
+      enrolledAt: e.enrolledAt,
+    }));
     return NextResponse.json(enrolledCourses, { status: 200 });
   } catch (error) {
     // If anything goes wrong (e.g., database connectivity), log and return 500.

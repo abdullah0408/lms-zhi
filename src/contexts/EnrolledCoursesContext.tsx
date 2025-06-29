@@ -2,10 +2,14 @@
 
 import React, { createContext, useEffect, useState } from "react";
 import { Course } from "@/generated/prisma/client.js";
+
+interface EnrolledCourse extends Course {
+  enrolledAt: Date;
+}
 import { useUser } from "@clerk/nextjs";
 
 interface EnrolledCoursesContextType {
-  enrolledCourses: Course[];
+  enrolledCourses: EnrolledCourse[];
   refreshEnrolledCourses: () => void;
   enrolledCourseIsLoading: boolean;
 }
@@ -32,7 +36,7 @@ export const EnrolledCoursesProvider = ({
   const { isSignedIn, isLoaded } = useUser();
 
   // Enrolled courses
-  const [enrolledCourses, setEnrolledCourses] = useState<Course[]>([]);
+  const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
   const [enrolledCourseIsLoading, setEnrolledCourseIsLoading] = useState(true);
 
   /**
@@ -42,7 +46,7 @@ export const EnrolledCoursesProvider = ({
     try {
       const res = await fetch("/api/user/enrolled-courses");
       if (!res.ok) throw new Error(`Failed to fetch courses: ${res.status}`);
-      const data = await res.json();
+      const data: EnrolledCourse[] = await res.json();
       setEnrolledCourses(data);
     } catch (err) {
       console.error(
