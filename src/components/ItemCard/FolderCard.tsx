@@ -33,7 +33,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { getItemUrl, shouldIgnoreClick } from "@/lib/utils";
+import { getItemUrl, shouldIgnoreClick, handleDelete } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -49,21 +49,15 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
     router.push(getItemUrl(folder, "Folder"));
   };
 
-  const handleDelete = async () => {
-    setDeleting(true);
-    try {
-      const res = await fetch(`/api/folder/delete?folderId=${folder.id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error();
-      toast.success("Folder deleted successfully");
+  const handleDeleteProxy = async () => {
+    const success = await handleDelete(
+      folder,
+      "Folder",
+      setDeleting,
+      setDeleteOpen
+    );
+    if (success) {
       router.refresh();
-    } catch {
-      console.error("Delete failed");
-      toast.error("Failed to delete Folder");
-    } finally {
-      setDeleting(false);
-      setDeleteOpen(false);
     }
   };
 
@@ -190,7 +184,7 @@ const FolderCard = ({ folder }: { folder: Folder }) => {
               </Button>
 
               <Button
-                onClick={handleDelete}
+                onClick={handleDeleteProxy}
                 disabled={deleting}
                 className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2"
               >

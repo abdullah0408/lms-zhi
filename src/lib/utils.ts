@@ -1,9 +1,10 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { Course, File, Folder } from "@/generated/prisma";
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export const shouldIgnoreClick = (
@@ -39,5 +40,41 @@ export const getItemUrl = (
       return `${base}/course/${(item as Folder).courseId}/folder/${item.id}`;
     default:
       return "";
+  }
+};
+
+export const handleDelete = async (
+  item: Course | File | Folder,
+  type: "Course" | "File" | "Folder",
+  setDeleting: (deleting: boolean) => void,
+  setDeleteOpen: (deleteOpen: boolean) => void
+) => {
+  setDeleting(true);
+  try {
+    let url: string;
+    switch (type) {
+      case "Course":
+        url = `/api/courses/delete?courseId=${item.id}`;
+        break;
+      case "File":
+        url = `/api/file/delete?fileId=${item.id}`;
+        break;
+      case "Folder":
+        url = `/api/folder/delete?folderId=${item.id}`;
+        break;
+    }
+
+    const res = await fetch(url, { method: "DELETE" });
+
+    if (!res.ok) throw new Error();
+
+    toast.success(`${type} deleted successfully`);
+    return true; // signal success
+  } catch {
+    toast.error(`Failed to delete ${type}`);
+    return false;
+  } finally {
+    setDeleting(false);
+    setDeleteOpen(false);
   }
 };

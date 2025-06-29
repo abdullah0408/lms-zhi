@@ -42,6 +42,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
+import { handleDelete } from "@/lib/utils";
 
 export function NavCourses() {
   const { isMobile } = useSidebar();
@@ -95,29 +96,16 @@ export function NavCourses() {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDeleteProxy = async () => {
     if (!targetCourseId) return;
 
-    setDeleting(true);
-    try {
-      const res = await fetch(
-        `/api/courses/delete?courseId=${targetCourseId}`,
-        {
-          method: "DELETE",
-        }
-      );
-      if (res.ok) {
-        toast.success("Course deleted successfully");
-        refreshEnrolledCourses();
-      } else {
-        throw new Error();
-      }
-    } catch {
-      console.error("Delete failed");
-      toast.error("Failed to delete course");
-    } finally {
-      setDeleting(false);
-      setDeleteOpen(false);
+    const course = enrolledCourses.find((c) => c.id === targetCourseId);
+    if (!course) return;
+
+    const success = await handleDelete(course, "Course", setDeleting, setDeleteOpen);
+
+    if (success) {
+      refreshEnrolledCourses();
       setTargetCourseId(null);
       setTargetCourseTitle("");
     }
@@ -246,7 +234,7 @@ export function NavCourses() {
               Cancel
             </Button>
             <Button
-              onClick={handleDelete}
+              onClick={handleDeleteProxy}
               disabled={deleting}
               className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2"
             >

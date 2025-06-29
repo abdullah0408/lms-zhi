@@ -29,7 +29,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Course } from "@/generated/prisma";
 import { useAuth } from "@/hooks/useAuth";
 import { useEnrolledCourses } from "@/hooks/useEnrolledCourses";
-import { getItemUrl, shouldIgnoreClick } from "@/lib/utils";
+import { getItemUrl, shouldIgnoreClick, handleDelete } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -78,24 +78,15 @@ const CourseCard = ({ course }: { course: Course }) => {
     }
   };
 
-  const handleDelete = async () => {
-    setDeleting(true);
-    try {
-      const res = await fetch(`/api/courses/delete?courseId=${course.id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        toast.success("Course deleted successfully");
-        refreshEnrolledCourses();
-      } else {
-        throw new Error();
-      }
-    } catch {
-      console.error("Delete failed");
-      toast.error("Failed to delete course");
-    } finally {
-      setDeleting(false);
-      setDeleteOpen(false);
+  const handleDeleteProxy = async () => {
+    const success = await handleDelete(
+      course,
+      "Course",
+      setDeleting,
+      setDeleteOpen
+    );
+    if (success) {
+      refreshEnrolledCourses();
     }
   };
 
@@ -224,7 +215,7 @@ const CourseCard = ({ course }: { course: Course }) => {
               Cancel
             </Button>
             <Button
-              onClick={handleDelete}
+              onClick={handleDeleteProxy}
               disabled={deleting}
               className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2"
             >

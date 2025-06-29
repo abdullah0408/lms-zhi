@@ -38,6 +38,7 @@ import {
 } from "../ui/dialog";
 import { toast } from "sonner";
 import { useReadStatus } from "@/hooks/useReadStatus";
+import { handleDelete } from "@/lib/utils";
 
 const ZipCard = ({ file }: { file: File }) => {
   const router = useRouter();
@@ -91,20 +92,10 @@ const ZipCard = ({ file }: { file: File }) => {
     }
   };
 
-  const handleDelete = async () => {
-    setDeleting(true);
-    try {
-      const res = await fetch(`/api/file/delete?fileId=${file.id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error();
-      toast.success("File deleted successfully");
+  const handleDeleteProxy = async () => {
+    const success = await handleDelete(file, "File", setDeleting, setDeleteOpen);
+    if (success) {
       router.refresh();
-    } catch {
-      toast.error("Failed to delete file");
-    } finally {
-      setDeleting(false);
-      setDeleteOpen(false);
     }
   };
 
@@ -270,7 +261,7 @@ const ZipCard = ({ file }: { file: File }) => {
               Cancel
             </Button>
             <Button
-              onClick={handleDelete}
+              onClick={handleDeleteProxy}
               disabled={deleting}
               className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2"
             >
