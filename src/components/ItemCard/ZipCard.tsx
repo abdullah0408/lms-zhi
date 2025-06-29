@@ -15,6 +15,7 @@ import {
   Download,
   Trash2,
   Loader2,
+  CheckCheck,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -129,6 +130,9 @@ const ZipCard = ({ file }: { file: File }) => {
                   <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
                     {file.title}
                   </p>
+                  {isRead && (
+                    <CheckCheck className="w-4 h-4 text-green-600 shrink-0" />
+                  )}
                 </div>
                 <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                   <span className="truncate">
