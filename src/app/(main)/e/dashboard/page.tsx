@@ -9,32 +9,7 @@ import { useCourseSelectionDialog } from "@/hooks/useCourseSelectionDialog";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-
-// Top loading bar
-const LoadingBar = () => {
-  return (
-    <>
-      <style>{`
-        @keyframes loadingBar {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-      `}</style>
-      <div className="fixed top-0 left-0 w-full h-0.5 z-50 overflow-hidden bg-transparent">
-        <div
-          className="h-full w-full bg-primary"
-          style={{
-            animation: "loadingBar 1.2s ease-in-out infinite",
-          }}
-        />
-      </div>
-    </>
-  );
-};
+import LoadingBar from "@/components/LoadingBar";
 
 const Page = () => {
   const { enrolledCourseIsLoading, enrolledCourses, refreshEnrolledCourses } =
