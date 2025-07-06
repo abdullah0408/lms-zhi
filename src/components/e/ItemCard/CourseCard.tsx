@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ContextMenu,
@@ -47,6 +47,10 @@ const CourseCard = ({ course }: { course: EnrolledCourse }) => {
 
   const router = useRouter();
   const { refreshEnrolledCourses } = useEnrolledCourses();
+
+  useEffect(() => {
+    router.prefetch(getItemUrl(course, "Course", true));
+  }, [router, course]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (shouldIgnoreClick(e)) return;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ContextMenu,
@@ -48,6 +48,10 @@ const FileCard = ({ file }: { file: File }) => {
   const { userDetails } = useAuth();
   const { openPreview } = usePreviewFile();
   const { readMap, markAsRead, markAsUnread } = useReadStatus();
+
+  useEffect(() => {
+    router.prefetch(getItemUrl(file, "File"));
+  }, [router, file]);
 
   const isRead = readMap[file.id] ?? false;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ContextMenu,
@@ -33,6 +33,10 @@ import Image from "next/image";
 const FileCard = ({ file }: { file: File }) => {
   const router = useRouter();
   const { openPreview } = usePreviewFile();
+
+  useEffect(() => {
+    router.prefetch(getItemUrl(file, "File", true));
+  }, [router, file]);
 
   const [isDownloading, setIsDownloading] = useState(false);
 

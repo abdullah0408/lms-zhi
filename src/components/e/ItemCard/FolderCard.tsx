@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ContextMenu,
@@ -27,6 +27,10 @@ import Image from "next/image";
 
 const FolderCard = ({ folder }: { folder: Folder }) => {
   const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch(getItemUrl(folder, "Folder", true));
+  }, [router, folder]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (shouldIgnoreClick(e)) return;
