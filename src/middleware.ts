@@ -30,6 +30,13 @@ export default clerkMiddleware(async (auth, req) => {
   const role = user?.public_metadata?.role;
 
   // Redirect logic
+  if (url.pathname === "/") {
+    if (role === "admin") {
+      return Response.redirect(new URL("/dashboard", req.url));
+    } else {
+      return Response.redirect(new URL("/e/dashboard", req.url));
+    }
+  }
 
   if (role !== "admin" && url.pathname.startsWith("/dashboard")) {
     return Response.redirect(new URL("/e/dashboard", req.url));
